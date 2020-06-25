@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const { StringDecoder } = require("string_decoder");
+const encrypt = require("mongoose-encryption");
 
 const app = express();
 
@@ -18,10 +19,13 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
   useUnifiedTopology: true
 });
 
-const userSchema = {
-  email: String,
-  password: String
-};
+const userSchema = new mongoose.Schema({
+    email: String,
+    password: String
+}); 
+
+const secret = "Thisismytestsecret.";
+userSchema.plugin(encrypt, {secret: secret, encryptedFields: ['password']});
 
 // new model
 const User = new mongoose.model("User", userSchema);
